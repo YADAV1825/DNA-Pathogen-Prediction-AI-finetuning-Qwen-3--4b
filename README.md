@@ -4,6 +4,7 @@
 
 **Author:** Rohit Yadav, NIT Jalandhar  
 **Project:** ATGC Pathogen Prediction AI – Fine-tuning Qwen3 for variant pathogenicity prediction 
+**Finetuned on huge dataset of 272k rows**
 
 *To reuse this project just clone and run the automated python jupyter notebook cell by cell*
 
@@ -206,6 +207,10 @@ results.txt
 - [Gene Ontology JSON graph](https://purl.obolibrary.org/obo/go.json)
 
 To download them you can use:
+
+### DATASET ROWS ARE AROUND 272K
+<img width="1328" height="502" alt="image" src="https://github.com/user-attachments/assets/fb280d60-4e12-4bf8-af1b-2b82f62dba4d" />
+
 
 ```bash
 mkdir -p data/raw/

@@ -52,7 +52,8 @@ Ablation studies confirm embeddings contribute meaningfully to performance.
 > ⚠️ **Note:** While the model achieves strong predictive metrics, real clinical pathogenicity depends on context such as disease, inheritance, and phenotype. This is a predictive research model, **not a clinical diagnostic tool**.  
 
 ---
-<img width="1917" height="952" alt="Screenshot 2025-10-23 183448" src="https://github.com/user-attachments/assets/280b1b55-7781-4ed7-b2ac-5ba1f982d066" />
+
+<img width="1910" height="948" alt="Screenshot 2025-10-23 194004" src="https://github.com/user-attachments/assets/affe779d-e707-4aae-84a3-427d2e602a95" />
 
 
 

@@ -1,0 +1,161 @@
+=====================================================
+          DNA Pathogen Finder Experiment Results
+=====================================================
+
+Dataset Configuration: Full (configs/pipeline.full.toml)
+LLM Backbone: Qwen/Qwen3-4B-Instruct-2507 (Loaded in 4-bit)
+Artifact Directory: /teamspace/studios/this_studio/artifacts/full
+LLM Output Directory: /teamspace/studios/this_studio/artifacts/full/qwen3
+
+-----------------------------------------------------
+          Data Loading & Preprocessing
+-----------------------------------------------------
+
+[splits] reusing cached ClinVar splits
+  [train] /teamspace/studios/this_studio/artifacts/full/splits/clinvar_train.feather (rows=272799)
+  [val] /teamspace/studios/this_studio/artifacts/full/splits/clinvar_val.feather (rows=35383)
+  [test] /teamspace/studios/this_studio/artifacts/full/splits/clinvar_test.feather (rows=31852)
+
+[vep] reuse cached annotations
+  [vep-report] train: rows=287,418 | hgvsc=95.1% | hgvsp=67.3% | MANE_Select=99.6% | seq_wt_missing=2.5% | seq_mt_missing=38.8%
+               top consequences: synonymous variant: 113825, intron variant: 45985, missense variant: 41964, frameshift variant: 17480, stop gained: 15774
+  [vep-report] val: rows=37,032 | hgvsc=94.3% | hgvsp=67.2% | MANE_Select=99.7% | seq_wt_missing=5.1% | seq_mt_missing=37.7%
+               top consequences: synonymous variant: 14971, missense variant: 5696, intron variant: 5677, frameshift variant: 1806, stop gained: 1793
+  [vep-report] test: rows=33,330 | hgvsc=96.9% | hgvsp=69.3% | MANE_Select=99.4% | seq_wt_missing=2.5% | seq_mt_missing=37.3%
+               top consequences: synonymous variant: 12974, missense variant: 5531, intron variant: 5244, frameshift variant: 2177, stop gained: 2000
+
+[dna] embeddings generated/loaded for train, val, test.
+  Saved to: /teamspace/studios/this_studio/artifacts/full/dna/dna_{split}_eff_fp16.npz
+
+[protein] embeddings generated/loaded for train, val, test.
+  Saved to: /teamspace/studios/this_studio/artifacts/full/protein/protein_{split}_eff_fp16.npz
+
+[dataset] Dimensions: dna=1280, go=256, protein=480 => total_conditioning_dim=2016
+[dataset] train: rows=272901 | GO_hit_rate=0.995 | protein_coverage=0.592
+[dataset] val: rows=35383 | GO_hit_rate=0.990 | protein_coverage=0.605
+[dataset] test: rows=31852 | GO_hit_rate=0.987 | protein_coverage=0.610
+
+-----------------------------------------------------
+              SMOKE CHECKS (Before Training)
+-----------------------------------------------------
+
+[SMOKE] train size: 272901
+[SMOKE] val   size: 35383
+[SMOKE] test  size: 31852
+
+[SMOKE] Label coverage (full): train n=272901 (+:59150, -:213751, pos%=0.217)
+[SMOKE] Label coverage (full): val n=35383 (+:6999, -:28384, pos%=0.198)
+[SMOKE] Label coverage (full): test n=31852 (+:7221, -:24631, pos%=0.227)
+
+[SMOKE] D_eff=1280  D_go=256  D_prot=480  → D_cond=2016
+[SMOKE] COND_START='<|cond_start|>' → id=151669
+[SMOKE] COND_END  ='<|cond_end|>' → id=151670
+[SMOKE] Label 'Benign': ids=[24566, 622]  |  ids(space)=[7355, 622]
+[SMOKE] Label 'Pathogenic': ids=[1820, 28469]  |  ids(space)=[7933, 28469]
+
+[SMOKE] Example context:
+Gene: FOXRED1
+HGVS.c: c.694C>T
+HGVS.p: p.Gln232Ter
+Most severe consequence: stop gained
+
+[SMOKE] Token count: prompt=103  |  prompt+label=106
+[SMOKE] First feature vector: shape=(2016,)  finite%=100.00%  min=-0.3481  max=0.4475
+
+-----------------------------------------------------
+                  Training Summary
+-----------------------------------------------------
+
+{'train_runtime': 7251.4932 seconds,
+ 'train_samples_per_second': 37.634,
+ 'train_steps_per_second': 0.196,
+ 'train_loss': 8.987909223124616,
+ 'aux_loss': 0.5128650873049211,  # Auxiliary loss from projector head
+ 'aux_acc': 0.7449402584735431,   # Auxiliary accuracy from projector head
+ 'aux_support': 4101.0,           # Number of samples for last aux calculation
+ 'epoch': 1.0}
+
+Adapter saved to: /teamspace/studios/this_studio/artifacts/full/qwen3/adapter
+
+-----------------------------------------------------
+                 Main Evaluation Results
+-----------------------------------------------------
+
+**Validation Set Metrics:**
+{'n': 35383,                           # Number of samples
+ 'accuracy': 0.961902608597349,         # Overall accuracy
+ 'precision': 0.9154536097632701,      # Precision for 'Pathogenic' class
+ 'recall': 0.8895556508072582,         # Recall for 'Pathogenic' class
+ 'f1': 0.9023188405797101,              # F1-score for 'Pathogenic' class
+ 'auc_roc': 0.9893769602373539,        # Area Under the ROC Curve
+ 'auc_pr': 0.9659146097838432}         # Area Under the Precision-Recall Curve
+Confusion Matrix (val): [[TN, FP], [FN, TP]]
+[[27809, 575], [773, 6226]]
+Classification Report (val):
+              precision    recall  f1-score   support
+      Benign      0.973     0.980     0.976     28384
+  Pathogenic      0.915     0.890     0.902      6999
+    accuracy                          0.962     35383
+   macro avg      0.944     0.935     0.939     35383
+weighted avg      0.962     0.962     0.962     35383
+
+Saved VAL predictions to: /teamspace/studios/this_studio/artifacts/full/qwen3/val_scored.feather
+
+---
+
+**Test Set Metrics:**
+{'n': 31852,                           # Number of samples
+ 'accuracy': 0.959688559588095,         # Overall accuracy
+ 'precision': 0.9265699094697514,      # Precision for 'Pathogenic' class
+ 'recall': 0.8929511148040438,         # Recall for 'Pathogenic' class
+ 'f1': 0.9094499294781382,              # F1-score for 'Pathogenic' class
+ 'auc_roc': 0.9888768470512874,        # Area Under the ROC Curve
+ 'auc_pr': 0.970828873575538}         # Area Under the Precision-Recall Curve
+Confusion Matrix (test): [[TN, FP], [FN, TP]]
+[[24120, 511], [773, 6448]]
+Classification Report (test):
+              precision    recall  f1-score   support
+      Benign      0.969     0.979     0.974     24631
+  Pathogenic      0.927     0.893     0.909      7221
+    accuracy                          0.960     31852
+   macro avg      0.948     0.936     0.942     31852
+weighted avg      0.959     0.960     0.959     31852
+
+Saved TEST predictions to: /teamspace/studios/this_studio/artifacts/full/qwen3/test_scored.feather
+
+-----------------------------------------------------
+              Ablation Study Results (Test Set)
+-----------------------------------------------------
+
+Ablation summary [test] (N=10000 samples per mode)
+Mode                Acc       F1    ROC-AUC     PR-AUC
+------------------------------------------------------
+cond+prompt     0.9363   0.8858     0.9800     0.9593  (Baseline)
+cond_only       0.7642   0.3671     0.7845     0.6389  (Conditioning only, no prompt text)
+cond_zero_dna   0.9368   0.8865     0.9806     0.9597  (Zeroed DNA embedding)
+cond_zero_prot  0.9205   0.8494     0.9734     0.9457  (Zeroed Protein embedding)
+cond_zero_go    0.9372   0.8850     0.9807     0.9605  (Zeroed GO embedding)
+prompt_only     0.9225   0.8511     0.9762     0.9506  (Prompt text only, zeroed conditioning)
+prompt_no_hgvsp  0.9243   0.8592     0.9755     0.9502  (Removed HGVS.p from prompt)
+prompt_no_hgvsc  0.9358   0.8849     0.9772     0.9558  (Removed HGVS.c from prompt)
+prompt_no_gene  0.9050   0.8446     0.9730     0.9440  (Removed Gene symbol from prompt)
+cond+noise      0.9047   0.8407     0.9694     0.9380  (Added Gaussian noise to conditioning)
+
+---
+
+Δ vs cond+prompt (Baseline):
+- cond_only     ΔAcc=-0.1721  ΔF1=-0.5187  ΔROC-AUC=-0.1954  ΔPR-AUC=-0.3204
+- cond_zero_dna  ΔAcc=+0.0005  ΔF1=+0.0007  ΔROC-AUC=+0.0006  ΔPR-AUC=+0.0005
+- cond_zero_prot  ΔAcc=-0.0158  ΔF1=-0.0364  ΔROC-AUC=-0.0066  ΔPR-AUC=-0.0136
+- cond_zero_go  ΔAcc=+0.0009  ΔF1=-0.0008  ΔROC-AUC=+0.0008  ΔPR-AUC=+0.0012
+- prompt_only   ΔAcc=-0.0138  ΔF1=-0.0347  ΔROC-AUC=-0.0038  ΔPR-AUC=-0.0087
+- prompt_no_hgvsp  ΔAcc=-0.0120  ΔF1=-0.0266  ΔROC-AUC=-0.0045  ΔPR-AUC=-0.0091
+- prompt_no_hgvsc  ΔAcc=-0.0005  ΔF1=-0.0010  ΔROC-AUC=-0.0028  ΔPR-AUC=-0.0034
+- prompt_no_gene  ΔAcc=-0.0313  ΔF1=-0.0412  ΔROC-AUC=-0.0070  ΔPR-AUC=-0.0153
+- cond+noise    ΔAcc=-0.0316  ΔF1=-0.0452  ΔROC-AUC=-0.0105  ΔPR-AUC=-0.0213
+
+(Detailed metrics for each ablation mode are available in the raw notebook output)
+
+=====================================================
+                    End of Results
+=====================================================
